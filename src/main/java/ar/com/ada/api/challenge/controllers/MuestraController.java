@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
 import ar.com.ada.api.challenge.models.response.GenericResponse;
@@ -42,10 +43,11 @@ public class MuestraController {
     @DeleteMapping("/muestras/{id}")
     public ResponseEntity<GenericResponse> actualizarColorBoyaAzul(@PathVariable Integer id){
         GenericResponse r = new GenericResponse();
-        String color = service.actualizarColorBoyaAzul(id);
+        Boya boya = service.actualizarColorBoyaAzul(id);
         r.isOk = true;
         r.id = id;
-        r.message = "Se ha actualizado con exito";
+        r.message = "Se ha actualizado con exito el color de la boya " +
+        boya.getBoyaId() + " a " + boya.getColorLuz();
         return ResponseEntity.ok(r);
     }
 }

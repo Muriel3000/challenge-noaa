@@ -43,10 +43,10 @@ public class MuestraService {
         return boya.getMuestras();
     }
 
-    public String actualizarColorBoyaAzul(Integer muestraId){
+    public Boya actualizarColorBoyaAzul(Integer muestraId){
         Muestra muestra = repo.findByMuestraId(muestraId);
         muestra.getBoya().setColorLuz("AZUL");
         repo.save(muestra);
-        return muestra.getBoya().getColorLuz();
+        return muestra.getBoya();
     }
 }
