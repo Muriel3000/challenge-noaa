@@ -24,8 +24,7 @@ public class MuestraService {
         
         Muestra m = new Muestra();
         
-        Boya boya = boyaService.traerBoya(boyaId);
-        boya.agregarMuesta(m);
+        Boya boya = boyaService.traerBoya(boyaId);    
         boyaService.cambiarColorLuzBoya(boya, alturaNivelDelMar);
 
         m.setHorario(horario);
@@ -33,7 +32,9 @@ public class MuestraService {
         m.setLatitud(latitud);
         m.setLongitud(longitud);
         m.setMatriculaEmbarcacion(matricula);
-
+        
+        boya.agregarMuesta(m);
+        
         repo.save(m);
         return m;
     }

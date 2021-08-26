@@ -1,5 +1,6 @@
 package ar.com.ada.api.challenge.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
 import ar.com.ada.api.challenge.models.response.GenericResponse;
+import ar.com.ada.api.challenge.models.response.ListaMuestraResponse;
 import ar.com.ada.api.challenge.models.response.MuestraResponse;
 import ar.com.ada.api.challenge.services.MuestraService;
 
@@ -36,8 +38,14 @@ public class MuestraController {
     }
 
     @GetMapping("/muestras/boyas/{idBoya}")
-    public ResponseEntity<List<Muestra>> traerMuestrasDeBoya(@PathVariable Integer idBoya){
-        return ResponseEntity.ok(service.traerMuestras(idBoya));
+    public ResponseEntity<List<ListaMuestraResponse>> traerMuestrasDeBoya(@PathVariable Integer idBoya){
+        List<Muestra> muestras = service.traerMuestras(idBoya);
+        List<ListaMuestraResponse> muestrasAFront = new ArrayList();
+        for(Muestra m : muestras){
+            ListaMuestraResponse muestraSinBoya = ListaMuestraResponse.convertirDesde(m);
+            muestrasAFront.add(muestraSinBoya);
+        }
+        return ResponseEntity.ok(muestrasAFront);
     }
 
     @DeleteMapping("/muestras/{id}")
