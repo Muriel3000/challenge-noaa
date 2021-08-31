@@ -1,5 +1,6 @@
 package ar.com.ada.api.challenge.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,5 +50,14 @@ public class MuestraService {
         muestra.getBoya().setColorLuz("AZUL");
         repo.save(muestra);
         return muestra.getBoya();
+    }
+
+    public List<Muestra> traerPorColor(String color){
+        List<Boya> boyas = boyaService.traerPorColor(color);
+        List<Muestra> muestras = new ArrayList();
+        for(Boya boya : boyas){
+            muestras.addAll(boya.getMuestras());
+        }
+        return muestras;
     }
 }

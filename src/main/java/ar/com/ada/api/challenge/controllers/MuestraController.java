@@ -15,6 +15,7 @@ import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
 import ar.com.ada.api.challenge.models.response.GenericResponse;
 import ar.com.ada.api.challenge.models.response.ListaMuestraResponse;
+import ar.com.ada.api.challenge.models.response.MuestraPorColor;
 import ar.com.ada.api.challenge.models.response.MuestraResponse;
 import ar.com.ada.api.challenge.services.MuestraService;
 
@@ -57,5 +58,16 @@ public class MuestraController {
         r.message = "Se ha actualizado con exito el color de la boya " +
         boya.getBoyaId() + " a " + boya.getColorLuz();
         return ResponseEntity.ok(r);
+    }
+
+    @GetMapping("/muestras/colores/{color}")
+    public ResponseEntity<List<MuestraPorColor>> traerMuestrasDeUnColor(@PathVariable String color){
+        List<Muestra> muestras = service.traerPorColor(color);
+        List<MuestraPorColor> muestrasPorColor = new ArrayList();
+        for(Muestra m : muestras){
+            MuestraPorColor muestraPorColor = MuestraPorColor.convertirDesde(m);
+            muestrasPorColor.add(muestraPorColor);
+        }
+        return ResponseEntity.ok(muestrasPorColor);
     }
 }

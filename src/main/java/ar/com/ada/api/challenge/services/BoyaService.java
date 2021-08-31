@@ -47,4 +47,8 @@ public class BoyaService {
         }
     }
 
+    public List<Boya> traerPorColor(String color){
+        return repo.findByColorLuz(color.toUpperCase());
+    }
+
 }
