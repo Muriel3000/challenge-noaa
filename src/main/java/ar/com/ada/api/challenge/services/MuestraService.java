@@ -60,4 +60,18 @@ public class MuestraService {
         }
         return muestras;
     }
+
+    public Muestra traerMuestraMarMinimo(Integer idBoya){
+        Boya boya = boyaService.traerBoya(idBoya);
+        Muestra muestraMarMinimo = new Muestra();
+        for(Muestra m : boya.getMuestras()){
+            if(muestraMarMinimo.getMuestraId() == null){
+                muestraMarMinimo = m;
+            } else if(muestraMarMinimo.getAlturaNivelDelMar() < m.getAlturaNivelDelMar()){
+                // tiene que quedar la altura mas grande? entre -5, 10 y 20, 20 seria la alturaMinima?
+                muestraMarMinimo = m;
+            }
+        }
+        return muestraMarMinimo;
+    }
 }

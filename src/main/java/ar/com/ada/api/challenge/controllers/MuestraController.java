@@ -15,6 +15,7 @@ import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
 import ar.com.ada.api.challenge.models.response.GenericResponse;
 import ar.com.ada.api.challenge.models.response.ListaMuestraResponse;
+import ar.com.ada.api.challenge.models.response.MuestraNivelMarMinimo;
 import ar.com.ada.api.challenge.models.response.MuestraPorColor;
 import ar.com.ada.api.challenge.models.response.MuestraResponse;
 import ar.com.ada.api.challenge.services.MuestraService;
@@ -69,5 +70,12 @@ public class MuestraController {
             muestrasPorColor.add(muestraPorColor);
         }
         return ResponseEntity.ok(muestrasPorColor);
+    }
+
+    @GetMapping("/muestras/minima/{idBoya}")
+    public ResponseEntity<MuestraNivelMarMinimo> traerMuestraMarMinimo(@PathVariable Integer idBoya){
+        Muestra muestra = service.traerMuestraMarMinimo(idBoya);
+        MuestraNivelMarMinimo m = MuestraNivelMarMinimo.convertirDesde(muestra);
+        return ResponseEntity.ok(m);
     }
 }
