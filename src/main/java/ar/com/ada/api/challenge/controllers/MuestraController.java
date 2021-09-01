@@ -14,6 +14,7 @@ import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
 import ar.com.ada.api.challenge.models.response.GenericResponse;
+import ar.com.ada.api.challenge.models.response.InfoAnomalia;
 import ar.com.ada.api.challenge.models.response.ListaMuestraResponse;
 import ar.com.ada.api.challenge.models.response.MuestraNivelMarMinimo;
 import ar.com.ada.api.challenge.models.response.MuestraPorColor;
@@ -77,5 +78,21 @@ public class MuestraController {
         Muestra muestra = service.traerMuestraMarMinimo(idBoya);
         MuestraNivelMarMinimo m = MuestraNivelMarMinimo.convertirDesde(muestra);
         return ResponseEntity.ok(m);
+    }
+
+    @GetMapping("/muestras/anomalias/{idBoya}")
+    public ResponseEntity<InfoAnomalia> buscarAnomalia(@PathVariable Integer idBoya){
+        
+        InfoAnomalia anomalia = new InfoAnomalia();
+        
+        Muestra muestraReciente = service.traerMuestraReciente(idBoya);
+        Muestra muestraAnterior = service.traerMuestraAnterior(idBoya);
+       
+        anomalia.alturaNivelDelMarActual = muestraReciente.getAlturaNivelDelMar();
+        anomalia.horarioInicioAnomalia = muestraAnterior.getHorario();
+        anomalia.horarioFinAnomalia = muestraReciente.getHorario();
+        anomalia.tipoAlerta = service.identificarAnomalia(idBoya).toString();
+
+        return ResponseEntity.ok(anomalia);
     }
 }

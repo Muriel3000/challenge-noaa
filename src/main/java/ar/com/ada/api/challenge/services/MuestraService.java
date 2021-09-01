@@ -1,6 +1,7 @@
 package ar.com.ada.api.challenge.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -73,5 +74,52 @@ public class MuestraService {
             }
         }
         return muestraMarMinimo;
+    }
+
+    public AnomaliaEnum identificarAnomalia(Integer idBoya){
+        
+        Boya boya = boyaService.traerBoya(idBoya);
+        
+        Muestra muestraReciente = boya.getMuestras().get(boya.getMuestras().size()-1);
+        Muestra muestraAnterior = boya.getMuestras().get(boya.getMuestras().size()-2);
+
+        if ( (muestraReciente.getAlturaNivelDelMar() > 200 && muestraAnterior.getAlturaNivelDelMar() > 200) 
+           || (muestraReciente.getAlturaNivelDelMar() < -200 && muestraAnterior.getAlturaNivelDelMar() < -200) ){
+               
+            if(diffHorariaMas10Min(muestraReciente.getHorario(), muestraAnterior.getHorario())){
+                return AnomaliaEnum.KAIJU;
+            }
+        }  
+
+        Double diffAltura = muestraReciente.getAlturaNivelDelMar() - muestraAnterior.getAlturaNivelDelMar();
+        if ( diffAltura < -500 || diffAltura > 500){
+            return AnomaliaEnum.IMPACTO;
+        }
+
+        return AnomaliaEnum.NORMAL;
+    } 
+
+    public Muestra traerMuestraReciente(Integer idBoya){
+        Boya boya = boyaService.traerBoya(idBoya);
+        Muestra muestraReciente = boya.getMuestras().get(boya.getMuestras().size()-1);
+        return muestraReciente;
+    }
+
+    public Muestra traerMuestraAnterior(Integer idBoya){
+        Boya boya = boyaService.traerBoya(idBoya);
+        Muestra muestraAnterior = boya.getMuestras().get(boya.getMuestras().size()-2);
+        return muestraAnterior;
+    }
+
+    public boolean diffHorariaMas10Min(Date horario1, Date horario2){
+        long diffTiempo = horario1.getTime() - horario2.getTime();
+        if(diffTiempo > 600000 || diffTiempo < -600000 ){
+            return true;
+        }
+        return false;
+    }
+
+    public enum AnomaliaEnum {
+        KAIJU, IMPACTO, NORMAL
     }
 }
