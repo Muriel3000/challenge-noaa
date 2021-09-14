@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ar.com.ada.api.challenge.entities.Anomalia;
 import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
+import ar.com.ada.api.challenge.entities.TipoAlerta.TipoAlertaEnum;
 import ar.com.ada.api.challenge.repositories.AnomaliaRepository;
 
 @Service
@@ -27,9 +28,9 @@ public class AnomaliaService {
         Boya boya = muestraReciente.getBoya();
         boolean anomaliaCreada = false; 
 
-        do { 
-            for(int i = (boya.getMuestras().size() - 2); i >= 0; i--){
-
+         
+        for(int i = (boya.getMuestras().size() - 2); i >= 0; i--){
+            do {
                 Muestra m = boya.getMuestras().get(i);
 
                 if ( (muestraReciente.getAlturaNivelDelMar() > 200 && m.getAlturaNivelDelMar() > 200) 
@@ -39,15 +40,16 @@ public class AnomaliaService {
                         Anomalia anomalia = new Anomalia();  
                         anomalia.setHorarioInicio(m.getHorario());
                         anomalia.setHorarioFin(muestraReciente.getHorario());
-                        anomalia.setNivelDelMarActual(muestraReciente.getAlturaNivelDelMar();
-                        anomalia.setTipoAnomalia(TipoAnomaliEnum.KAIJU);
+                        anomalia.setNivelDelMarActual(muestraReciente.getAlturaNivelDelMar());
+                        anomalia.setTipoAlerta(TipoAlertaEnum.KAIJU);
                         boya.agregarAnomalia(anomalia);//may cause trouble
                         repo.save(anomalia);
                         anomaliaCreada = true;
                     }
                 }  
-            }
-        } while(!anomaliaCreada);
+            } while(anomaliaCreada == false);     
+        }
+
 
     }
 
@@ -62,7 +64,7 @@ public class AnomaliaService {
             anomalia.setHorarioInicio(muestraAnterior.getHorario());
             anomalia.setHorarioFin(muestraReciente.getHorario());
             anomalia.setNivelDelMarActual(muestraReciente.getAlturaNivelDelMar());
-            anomalia.setTipoAnomalia(TipoAnomaliaEnum.IMPACTO);
+            anomalia.setTipoAlerta(TipoAlertaEnum.IMPACTO);
             boya.agregarAnomalia(anomalia);//may cause trouble
             repo.save(anomalia);
         }

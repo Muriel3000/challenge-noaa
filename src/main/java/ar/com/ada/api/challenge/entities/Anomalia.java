@@ -1,6 +1,7 @@
 package ar.com.ada.api.challenge.entities;
 
 import java.util.Date;
+import ar.com.ada.api.challenge.entities.TipoAlerta.TipoAlertaEnum;
 
 import javax.persistence.*;
 
@@ -70,38 +71,14 @@ public class Anomalia {
     }
 
     public TipoAlertaEnum getTipoAlerta() {
-        return TipoAlertaEnum.parse(tipoAlerta);
+        return TipoAlertaEnum.parse(this.tipoAlerta);
     }
 
-    public void setTipoAlerta(TipoAlertaEnum) {
-        this.tipoAlerta = TipoAlertaEnum.getValue();
+    public void setTipoAlerta(TipoAlertaEnum tipoAlerta) {
+        this.tipoAlerta = tipoAlerta.getValue();
     }
 
-    public enum TipoAlertaEnum {
-        KAIJU(1), IMPACTO(2);
-
-        private final Integer value;
-
-        // NOTE: Enum constructor tiene que estar en privado
-        private TipoAlertaEnum(Integer value) {
-            this.value = value;
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-
-        public static TipoAlertaEnum parse(Integer id) {
-            TipoAlertaEnum status = null; // Default
-            for (TipoAlertaEnum item : TipoAlertaEnum.values()) {
-                if (item.getValue().equals(id)) {
-                    status = item;
-                    break;
-                }
-            }
-            return status;
-        }
-    }
+    
 
 
 }
