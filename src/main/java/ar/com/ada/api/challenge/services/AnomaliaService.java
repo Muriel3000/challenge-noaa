@@ -26,32 +26,39 @@ public class AnomaliaService {
     public void crearAnomaliaKAIJU(Muestra muestraReciente){
         
         Boya boya = muestraReciente.getBoya();
-        boolean anomaliaCreada = false; 
+        Double alturasAnteriores = null;
 
-         
-        for(int i = (boya.getMuestras().size() - 2); i >= 0; i--){
-            do {
-                Muestra m = boya.getMuestras().get(i);
-
-                if ( (muestraReciente.getAlturaNivelDelMar() > 200 && m.getAlturaNivelDelMar() > 200) 
-                 || (muestraReciente.getAlturaNivelDelMar() < -200 && m.getAlturaNivelDelMar() < -200) ){
-                
-                    if(diffHorariaMas10Min(muestraReciente.getHorario(), m.getHorario())){
-                        Anomalia anomalia = new Anomalia();  
-                        anomalia.setHorarioInicio(m.getHorario());
-                        anomalia.setHorarioFin(muestraReciente.getHorario());
-                        anomalia.setNivelDelMarActual(muestraReciente.getAlturaNivelDelMar());
-                        anomalia.setTipoAlerta(TipoAlertaEnum.KAIJU);
-                        boya.agregarAnomalia(anomalia);//may cause trouble
-                        repo.save(anomalia);
-                        anomaliaCreada = true;
-                    }
-                }  
-            } while(anomaliaCreada == false);     
+        for(int i = (boya.getMuestras().size() - 2); i >= 0; i = (i - 1)){
+            
+            Muestra m = boya.getMuestras().get(i);  
+            Muestra muestraPreviaEnFor = boya.getMuestras().get(i + 1);
+            alturasAnteriores = muestraPreviaEnFor.getAlturaNivelDelMar();
+            
+            if ( ( muestraReciente != muestraPreviaEnFor) &&
+               (!(alturasAnteriores > 200 || alturasAnteriores < -200 )))
+                break;
+            
+            if ( (muestraReciente.getAlturaNivelDelMar() > 200 && m.getAlturaNivelDelMar() > 200) 
+              || (muestraReciente.getAlturaNivelDelMar() < -200 && m.getAlturaNivelDelMar() < -200) ){
+                        
+                if(diffHorariaMas10Min(muestraReciente.getHorario(), m.getHorario())){
+                    Anomalia anomalia = new Anomalia();  
+                    anomalia.setHorarioInicio(m.getHorario());
+                    anomalia.setHorarioFin(muestraReciente.getHorario());
+                    anomalia.setNivelDelMarActual(muestraReciente.getAlturaNivelDelMar());
+                    anomalia.setTipoAlerta(TipoAlertaEnum.KAIJU);
+                    boya.agregarAnomalia(anomalia);//may cause trouble
+                    repo.save(anomalia);
+                    break;
+                }
+            }       
         }
-
-
     }
+
+    public void validarAlturaMarConstante(Muestra muestraReciente, Muestra m){
+        
+    }
+
 
     public void crearAnomaliaIMPACTO(Muestra muestraReciente){
         

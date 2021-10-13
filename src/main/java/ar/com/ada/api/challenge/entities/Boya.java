@@ -25,11 +25,11 @@ public class Boya {
     private Double latitudInstalacion;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "boya", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "boya", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Muestra> muestras;
 
     @JsonIgnore
-    @OneToMany(mappedBy= "boya", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy= "boya", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Anomalia> anomalias;
 
     public List<Anomalia> getAnomalias() {
