@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.ada.api.challenge.entities.Anomalia;
 import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.models.request.InfoMuestraNueva;
@@ -81,18 +82,8 @@ public class MuestraController {
     }
 
     @GetMapping("/muestras/anomalias/{idBoya}")
-    public ResponseEntity<InfoAnomalia> buscarAnomalia(@PathVariable Integer idBoya){
-        
-        InfoAnomalia anomalia = new InfoAnomalia();
-        
-        Muestra muestraReciente = service.traerMuestraReciente(idBoya);
-        Muestra muestraAnterior = service.traerMuestraAnterior(idBoya);
-       
-        anomalia.alturaNivelDelMarActual = muestraReciente.getAlturaNivelDelMar();
-        anomalia.horarioInicioAnomalia = muestraAnterior.getHorario();
-        anomalia.horarioFinAnomalia = muestraReciente.getHorario();
-        anomalia.tipoAlerta = service.identificarAnomalia(idBoya).toString();
-
-        return ResponseEntity.ok(anomalia);
+    public ResponseEntity<Anomalia> buscarAnomalia(@PathVariable Integer idBoya){
+        Anomalia ultimaAnomalia = service.buscarAnomalia(idBoya);
+        return ResponseEntity.ok(ultimaAnomalia);
     }
 }

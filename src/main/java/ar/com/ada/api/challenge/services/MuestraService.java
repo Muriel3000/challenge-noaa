@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ar.com.ada.api.challenge.entities.Anomalia;
 import ar.com.ada.api.challenge.entities.Boya;
 import ar.com.ada.api.challenge.entities.Muestra;
 import ar.com.ada.api.challenge.repositories.MuestraRepository;
@@ -20,6 +21,9 @@ public class MuestraService {
 
     @Autowired
     private BoyaService boyaService;
+
+    @Autowired 
+    private AnomaliaService anomaliaService;
 
     public Muestra crearMuestra(Integer boyaId, Date horario, String matricula,
     Double latitud, Double longitud, Double alturaNivelDelMar){
@@ -38,6 +42,8 @@ public class MuestraService {
         boya.agregarMuesta(m);
         
         repo.save(m);
+        anomaliaService.crearAnomaliaSiExiste(m);
+
         return m;
     }
 
@@ -63,63 +69,24 @@ public class MuestraService {
     }
 
     public Muestra traerMuestraMarMinimo(Integer idBoya){
+       
         Boya boya = boyaService.traerBoya(idBoya);
         Muestra muestraMarMinimo = new Muestra();
+       
         for(Muestra m : boya.getMuestras()){
             if(muestraMarMinimo.getMuestraId() == null){
                 muestraMarMinimo = m;
-            } else if(muestraMarMinimo.getAlturaNivelDelMar() < m.getAlturaNivelDelMar()){
-                // tiene que quedar la altura mas grande? entre -5, 10 y 20, 20 seria la alturaMinima?
+            } else if(muestraMarMinimo.getAlturaNivelDelMar() > m.getAlturaNivelDelMar()){
                 muestraMarMinimo = m;
             }
         }
         return muestraMarMinimo;
     }
 
-    public AnomaliaEnum identificarAnomalia(Integer idBoya){
-        
-        Boya boya = boyaService.traerBoya(idBoya);
-        
-        Muestra muestraReciente = boya.getMuestras().get(boya.getMuestras().size()-1);
-        Muestra muestraAnterior = boya.getMuestras().get(boya.getMuestras().size()-2);
-
-        if ( (muestraReciente.getAlturaNivelDelMar() > 200 && muestraAnterior.getAlturaNivelDelMar() > 200) 
-           || (muestraReciente.getAlturaNivelDelMar() < -200 && muestraAnterior.getAlturaNivelDelMar() < -200) ){
-               
-            if(diffHorariaMas10Min(muestraReciente.getHorario(), muestraAnterior.getHorario())){
-                return AnomaliaEnum.KAIJU;
-            }
-        }  
-
-        Double diffAltura = muestraReciente.getAlturaNivelDelMar() - muestraAnterior.getAlturaNivelDelMar();
-        if ( diffAltura < -500 || diffAltura > 500){
-            return AnomaliaEnum.IMPACTO;
-        }
-
-        return AnomaliaEnum.NORMAL;
-    } 
-
-    public Muestra traerMuestraReciente(Integer idBoya){
-        Boya boya = boyaService.traerBoya(idBoya);
-        Muestra muestraReciente = boya.getMuestras().get(boya.getMuestras().size()-1);
-        return muestraReciente;
-    }
-
-    public Muestra traerMuestraAnterior(Integer idBoya){
-        Boya boya = boyaService.traerBoya(idBoya);
-        Muestra muestraAnterior = boya.getMuestras().get(boya.getMuestras().size()-2);
-        return muestraAnterior;
-    }
-
-    public boolean diffHorariaMas10Min(Date horario1, Date horario2){
-        long diffTiempo = horario1.getTime() - horario2.getTime();
-        if(diffTiempo > 600000 || diffTiempo < -600000 ){
-            return true;
-        }
-        return false;
-    }
-
-    public enum AnomaliaEnum {
-        KAIJU, IMPACTO, NORMAL
+    public Anomalia buscarAnomalia(Integer boyaId){
+        Boya boya = boyaService.traerBoya(boyaId);
+        Integer ultimaAnomalia = boya.getAnomalias().size() - 1; 
+        Anomalia anomalia = boya.getAnomalias().get(ultimaAnomalia);
+        return anomalia;
     }
 }
